@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PLAN & ACTION TS JEMBER - DEPLS & ADG</title>
+<style>
+:root{
+  --blue:#31a8d6;--orange:#ef6a2b;--green:#168b59;--navy:#17232d;
+  --bg:#eef3f7;--card:#fff;--line:#c8d2da;--muted:#687681;
+  --shadow:0 8px 24px rgba(20,38,52,.08)
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--navy);min-width:1000px}
+.header{
+ position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);
+ backdrop-filter:blur(12px);border-top:4px solid #319361;border-bottom:1px solid #b8c3ca;
+ padding:11px 20px;text-align:center;box-shadow:0 2px 12px #0001
+}
+.header h1{margin:0;font-size:29px}.blue{color:var(--blue)}.orange{color:var(--orange)}
+.header small{color:var(--muted);font-size:10px;letter-spacing:1.5px}
+.wrap{max-width:2000px;margin:auto;padding:14px}
+.layer{
+ background:var(--card);border:1px solid var(--line);border-radius:13px;
+ margin-bottom:10px;box-shadow:var(--shadow);overflow:hidden
+}
+.layer-head{
+ display:flex;align-items:center;gap:10px;cursor:pointer;padding:12px 15px;
+ user-select:none;background:linear-gradient(90deg,#f7fafc,#fff)
+}
+.layer-head:hover{background:#f0f8fb}
+.layer-icon{
+ width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;
+ display:grid;place-items:center;font-weight:800;font-size:12px
+}
+.layer-title{font-weight:800;font-size:13px}.layer-help{color:var(--muted);font-size:11px;margin-left:5px}
+.chevron{margin-left:auto;font-size:18px;color:var(--muted);transition:.2s}
+.layer.open .chevron{transform:rotate(180deg)}
+.layer-body{display:none;padding:13px;border-top:1px solid var(--line)}
+.layer.open .layer-body{display:block}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.stat{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fbfcfd}
+.stat span{font-size:10px;color:var(--muted)}.stat strong{display:block;font-size:23px;margin-top:4px}
+.stat:nth-child(1) strong{color:var(--blue)}.stat:nth-child(3) strong{color:var(--green)}.stat:nth-child(4) strong{color:var(--orange)}
+
+.controls{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.controls input,.controls select,.controls button{
+ height:38px;border:1px solid #c4cdd4;border-radius:7px;padding:0 10px;font-size:12px;background:#fff
+}
+#search{min-width:280px;flex:1}.controls button{cursor:pointer;font-weight:700}
+.btn-blue{background:var(--blue)!important;color:#fff;border-color:var(--blue)!important}
+.btn-green{background:var(--green)!important;color:#fff;border-color:var(--green)!important}
+.btn-orange{background:var(--orange)!important;color:#fff;border-color:var(--orange)!important}
+
+.table-wrap{overflow:auto;max-height:calc(100vh - 230px)}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:2250px;table-layout:fixed}
+th,td{border-right:1px solid #b7c2ca;border-bottom:1px solid #b7c2ca;padding:5px 7px}
+th:first-child,td:first-child{border-left:1px solid #b7c2ca}
+thead th{position:sticky;top:0;z-index:15;background:#f2f6f8;text-align:center;font-size:11px;font-weight:800}
+thead tr:first-child th{height:43px}
+thead tr:nth-child(2) th{height:28px;background:#eaf0f3;font-size:10px}
+.target-head{background:#e7f3f8!important;font-size:12px!important}
+tbody td{height:38px;font-size:11px;background:#fff}
+tbody tr:nth-child(even) td{background:#fbfcfd}
+tbody tr:hover td{background:#eef9fc}
+td[contenteditable]{outline:none}
+td[contenteditable]:focus{background:#fff8d8!important;box-shadow:inset 0 0 0 2px #e2aa32}
+.no{text-align:center;font-weight:800}
+.center{text-align:center}
+.date{width:100%;border:0;background:transparent;font:inherit}
+.check{width:17px;height:17px;accent-color:var(--green)}
+.progress select{width:100%;border:0;background:transparent;font-weight:700;font-size:10px}
+.progress[data-status="Selesai"]{background:#e6f7ee!important;color:#087844}
+.progress[data-status="Proses"]{background:#fff4d5!important;color:#956300}
+.progress[data-status="Belum"]{background:#fbe8e8!important;color:#a22d2d}
+.conclusion{
+ font-size:10px;line-height:1.35;white-space:normal
+}
+.conclusion.good{background:#edf9f3!important}
+.conclusion.warn{background:#fff8e8!important}
+.conclusion.info{background:#eef7fb!important}
+.conclusion b{display:block;font-size:9px;text-transform:uppercase;margin-bottom:2px}
+
+.note{font-size:10px;color:var(--muted);margin-top:9px}
+
+.modal-bg{
+ position:fixed;inset:0;background:#10202bcc;backdrop-filter:blur(4px);z-index:100;
+ display:none;align-items:center;justify-content:center;padding:20px
+}
+.modal-bg.open{display:flex}
+.modal{
+ width:min(820px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:14px;
+ box-shadow:0 25px 70px #0005
+}
+.modal-head{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}
+.modal-head h2{margin:0;font-size:17px}
+.form{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:16px}
+.form label{font-size:10px;font-weight:800;color:var(--muted)}
+.form input,.form select{display:block;width:100%;height:36px;margin-top:4px;border:1px solid #c7d0d6;border-radius:7px;padding:0 8px}
+.full{grid-column:1/-1}
+.modal-foot{display:flex;justify-content:flex-end;gap:7px;padding:12px 16px;border-top:1px solid var(--line)}
+.modal button{height:36px;border:1px solid #c7d0d6;border-radius:7px;padding:0 12px;cursor:pointer}
+.modal .primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+.toast{
+ position:fixed;right:18px;bottom:18px;z-index:200;background:var(--navy);color:#fff;
+ padding:10px 14px;border-radius:8px;opacity:0;transform:translateY(10px);transition:.2s;font-size:12px
+}.toast.show{opacity:1;transform:translateY(0)}
+
+@media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}.form{grid-template-columns:1fr}.full{grid-column:auto}}
+@media print{
+ .header{position:static}.layer-head{display:none}.layer-body{display:block!important;max-height:none!important;opacity:1!important;padding:13px!important}
+ .layer:not(:last-child){display:none}.layer-body[style*="padding:0"]{padding:0!important}.table-wrap{max-height:none;overflow:visible}
+ body{background:#fff}.wrap{padding:0}
+}
+
+/* === Animated UI Upgrade === */
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(circle at 8% 12%,rgba(49,168,214,.18),transparent 28%),
+    radial-gradient(circle at 92% 18%,rgba(239,106,43,.14),transparent 25%),
+    radial-gradient(circle at 50% 100%,rgba(22,139,89,.10),transparent 32%),
+    linear-gradient(135deg,#edf7fb 0%,#f8fbfd 48%,#eef4f7 100%);
+  position:relative;
+  overflow-x:hidden;
+}
+body::before,body::after{
+  content:"";position:fixed;width:360px;height:360px;border-radius:50%;
+  pointer-events:none;z-index:-1;filter:blur(12px);opacity:.38;
+}
+body::before{left:-120px;top:18%;background:rgba(49,168,214,.16);animation:floatA 14s ease-in-out infinite}
+body::after{right:-130px;bottom:8%;background:rgba(239,106,43,.12);animation:floatB 17s ease-in-out infinite}
+@keyframes floatA{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(65px,-35px) scale(1.12)}}
+@keyframes floatB{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-55px,30px) scale(.9)}}
+
+.header{
+  background:rgba(255,255,255,.76);
+  box-shadow:0 8px 30px rgba(20,38,52,.10);
+  animation:headerDrop .65s ease both;
+}
+.header h1{letter-spacing:.3px;text-shadow:0 2px 14px rgba(49,168,214,.12)}
+@keyframes headerDrop{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:none}}
+
+.wrap{animation:pageIn .7s ease both}
+@keyframes pageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.layer{
+  background:rgba(255,255,255,.76);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-color:rgba(200,210,218,.78);
+  box-shadow:0 10px 30px rgba(20,38,52,.08);
+  transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease;
+  animation:layerIn .65s ease both;
+}
+.layer:nth-child(2){animation-delay:.08s}.layer:nth-child(3){animation-delay:.16s}
+.layer:hover{box-shadow:0 14px 36px rgba(20,38,52,.12);border-color:rgba(49,168,214,.28)}
+@keyframes layerIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+.layer-head{
+  background:linear-gradient(90deg,rgba(247,250,252,.88),rgba(255,255,255,.68));
+  transition:background .25s ease,padding-left .25s ease;
+}
+.layer-head:hover{background:linear-gradient(90deg,#eef9fc,rgba(255,255,255,.82));padding-left:19px}
+.layer-icon{box-shadow:0 5px 14px rgba(49,168,214,.22);transition:transform .3s ease,box-shadow .3s ease}
+.layer-head:hover .layer-icon{transform:rotate(-6deg) scale(1.08);box-shadow:0 7px 18px rgba(49,168,214,.30)}
+.chevron{transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.layer-body{
+  display:block;
+  max-height:0;
+  overflow:hidden;
+  opacity:0;
+  padding:0 13px;
+  border-top:1px solid transparent;
+  transition:max-height .5s ease,opacity .28s ease,padding .4s ease,border-color .3s ease;
+}
+.layer.open .layer-body{
+  max-height:5000px;
+  opacity:1;
+  padding:13px;
+  border-top-color:var(--line);
+}
+.layer.open .layer-body[style*="padding:0"]{padding:0}
+
+.stat{
+  background:rgba(251,252,253,.84);
+  transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;
+}
+.stat:hover{transform:translateY(-4px);box-shadow:0 10px 22px rgba(20,38,52,.10);border-color:rgba(49,168,214,.32)}
+.stat strong{transition:transform .25s ease}.stat:hover strong{transform:scale(1.06);transform-origin:left center}
+
+.controls input,.controls select,.controls button{
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+.controls input:focus,.controls select:focus{
+  outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(49,168,214,.13);
+}
+.controls button:hover{transform:translateY(-2px);box-shadow:0 7px 16px rgba(20,38,52,.12)}
+.controls button:active{transform:translateY(0) scale(.98)}
+
+tbody tr{transition:transform .18s ease,filter .18s ease}
+tbody tr:hover{transform:translateX(2px)}
+tbody td{transition:background .18s ease,box-shadow .18s ease}
+td[contenteditable]:focus{animation:focusPulse 1.4s ease-in-out infinite alternate}
+@keyframes focusPulse{from{box-shadow:inset 0 0 0 2px #e2aa32}to{box-shadow:inset 0 0 0 2px #f0c65a}}
+
+.conclusion{transition:background .25s ease,box-shadow .25s ease}
+.conclusion:hover{box-shadow:inset 3px 0 0 var(--blue)}
+
+.modal-bg{opacity:0;transition:opacity .25s ease}
+.modal-bg.open{opacity:1}
+.modal{animation:modalIn .3s cubic-bezier(.2,.8,.2,1) both}
+@keyframes modalIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+
+.toast{box-shadow:0 10px 28px rgba(0,0,0,.18)}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
+
+
+.source-note{background:linear-gradient(90deg,#eef8fb,#f8fbfd);border-top:1px solid #d7e7ed}
+.source-note>b{color:var(--blue);letter-spacing:.5px}
+.conclusion{transition:background .25s ease,transform .2s ease}
+.conclusion.good,.conclusion.warn,.conclusion.info{background-clip:padding-box}
+</style>
+</head>
+<body>
+
+<header class="header">
+ <h1><span class="blue">PLAN</span> &amp; <span class="orange">ACTION</span> TS JEMBER</h1>
+ <small>MONITORING • KUNJUNGAN • TARGET • PROGRESS • KESIMPULAN</small>
+</header>
+
+<main class="wrap">
+
+<section class="layer">
+ <div class="layer-head" onclick="toggleLayer(this)">
+  <span class="layer-icon">1</span><span class="layer-title">Ringkasan</span>
+  <span class="layer-help">Klik untuk membuka</span><span class="chevron">⌄</span>
+ </div>
+ <div class="layer-body">
+  <div class="stats">
+   <div class="stat"><span>TOTAL DATA</span><strong id="total">0</strong></div>
+   <div class="stat"><span>DATA TERISI</span><strong id="filled">0</strong></div>
+   <div class="stat"><span>SELESAI</span><strong id="done">0</strong></div>
+   <div class="stat"><span>PROSES</span><strong id="process">0</strong></div>
+  </div>
+ </div>
+</section>
+
+<section class="layer">
+ <div class="layer-head" onclick="toggleLayer(this)">
+  <span class="layer-icon">2</span><span class="layer-title">Kontrol & Aksi</span>
+  <span class="layer-help">Klik untuk membuka</span><span class="chevron">⌄</span>
+ </div>
+ <div class="layer-body">
+  <div class="controls">
+   <input id="search" type="search" placeholder="🔎 Cari plasma, kecamatan, problem, TS...">
+   <select id="statusFilter"><option value="">Semua Progress</option><option>Belum</option><option>Proses</option><option>Selesai</option></select>
+   <button class="btn-blue" onclick="openModal()">＋ Input Data</button>
+   <button class="btn-green" onclick="save()">💾 Simpan</button>
+   <button class="btn-orange" onclick="window.print()">🖨 Cetak</button>
+   <button onclick="exportCSV()">⬇ CSV</button>
+  </div>
+ </div>
+</section>
+
+<section class="layer open" id="dataLayer">
+ <div class="layer-head" onclick="toggleLayer(this)">
+  <span class="layer-icon">3</span><span class="layer-title">Data Plan & Action + Kesimpulan Otomatis</span>
+  <span class="layer-help">Klik untuk menutup/membuka</span><span class="chevron">⌄</span>
+ </div>
+ <div class="layer-body" style="padding:0">
+  <div class="table-wrap">
+   <table>
+    <colgroup>
+     <col style="width:45px"><col style="width:105px"><col style="width:105px"><col style="width:125px">
+     <col style="width:175px"><col style="width:195px"><col style="width:115px"><col style="width:65px">
+     <col style="width:120px"><col style="width:70px">
+     <col style="width:75px"><col style="width:75px"><col style="width:75px"><col style="width:75px"><col style="width:75px"><col style="width:85px"><col style="width:75px">
+     <col style="width:100px"><col style="width:260px">
+    </colgroup>
+    <thead>
+     <tr>
+      <th rowspan="2">No.</th><th rowspan="2">PLASMA</th><th rowspan="2">POPULASI</th><th rowspan="2">KECAMATAN</th>
+      <th rowspan="2">PROBLEM</th><th rowspan="2">HANDLING</th><th rowspan="2">AGENDA</th><th rowspan="2">TS</th>
+      <th rowspan="2">TGL KUNJUNGAN</th><th rowspan="2">CEKLIST<br>PH</th>
+      <th colspan="7" class="target-head">TARGET</th><th rowspan="2">PROGRESS</th><th rowspan="2">KESIMPULAN OTOMATIS</th>
+     </tr>
+     <tr><th>UMUR</th><th>FCR</th><th>BW</th><th>DEPLS</th><th>ADG</th><th>DIFF FCR</th><th>FI</th></tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+   </table>
+  </div>
+  <div class="note source-note" style="padding:8px 12px"><b>SUMBER ANALISA: TABEL PERFORMANCE MUSTIKA</b><br>Kesimpulan menggunakan benchmark dari <b>Tabel Performance Mustika.xlsx</b> (TABEL STD): BW, FCR CUM, DEPL, LIVE, UMUR, ADG, IP, dan FI CUM. Sistem mencari benchmark terdekat berdasarkan UMUR lalu membandingkan BW, FCR, dan FI yang diinput. BW dinilai lebih baik bila ≥ standar; FCR/FI dinilai lebih baik bila ≤ standar. Parameter yang belum diisi tidak dinilai.</div>
+ </div>
+</section>
+
+</main>
+
+<div class="modal-bg" id="modal">
+ <div class="modal">
+  <div class="modal-head"><h2>Input Data Plan & Action</h2><button onclick="closeModal()">✕</button></div>
+  <div class="form">
+   <label>PLASMA<input data-m="plasma"></label><label>POPULASI<input data-m="populasi" type="number"></label>
+   <label>KECAMATAN<input data-m="kecamatan"></label><label>TS<input data-m="ts"></label>
+   <label>PROBLEM<input data-m="problem"></label><label>HANDLING<input data-m="handling"></label>
+   <label>AGENDA<input data-m="agenda"></label><label>TGL KUNJUNGAN<input data-m="tanggal" type="date"></label>
+   <label>UMUR<input data-m="umur"></label><label>FCR<input data-m="fcr"></label>
+   <label>BW<input data-m="bw"></label><label>DIFF FCR<input data-m="diffFcr"></label>
+   <label>FI<input data-m="fi"></label><label>DEPLS<input data-m="depls"></label><label>ADG<input data-m="adg"></label>
+   <label>PROGRESS<select data-m="progress"><option>Belum</option><option>Proses</option><option>Selesai</option></select></label>
+   <label class="full">CEKLIST PH <input data-m="ceklist" type="checkbox"></label>
+  </div>
+  <div class="modal-foot"><button onclick="closeModal()">Batal</button><button class="primary" onclick="addFromModal()">Tambah Data</button></div>
+ </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='plan_action_ts_jember_layered_v4';
+const fields=['plasma','populasi','kecamatan','problem','handling','agenda','ts','tanggal','ceklist','umur','fcr','bw','diffFcr','fi','depls','adg','progress'];
+const blank=()=>({plasma:'',populasi:'',kecamatan:'',problem:'',handling:'',agenda:'',ts:'',tanggal:'',ceklist:false,umur:'',fcr:'',bw:'',diffFcr:'',fi:'',depls:'',adg:'',progress:'Belum'});
+
+function getData(){
+ try{const x=JSON.parse(localStorage.getItem(KEY));return Array.isArray(x)&&x.length?x:Array.from({length:30},blank)}
+ catch(e){return Array.from({length:30},blank)}
+}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+const performanceStandards=[{"bw":0.05,"fcr":0.147,"depl":0.0015,"live":0.9985,"umur":0.4,"adg":125.0,"ip":8490.646259,"fi":0.00735},{"bw":0.06,"fcr":0.2583,"depl":0.0025,"live":0.9975,"umur":0.8,"adg":75.0,"ip":2896.341463,"fi":0.015498},{"bw":0.07,"fcr":0.341143,"depl":0.0035,"live":0.9965,"umur":1.6,"adg":43.75,"ip":1277.965348,"fi":0.02388},{"bw":0.08,"fcr":0.425334,"depl":0.0045,"live":0.9955,"umur":2.3,"adg":34.782609,"ip":814.091678,"fi":0.034027},{"bw":0.09,"fcr":0.489909,"depl":0.0055,"live":0.9945,"umur":2.9,"adg":31.034483,"ip":629.990327,"fi":0.044092},{"bw":0.1,"fcr":0.54243,"depl":0.008,"live":0.992,"umur":3.5,"adg":28.571429,"ip":522.516401,"fi":0.054243},{"bw":0.11,"fcr":0.590646,"depl":0.008,"live":0.992,"umur":4.0,"adg":27.5,"ip":461.867176,"fi":0.064971},{"bw":0.12,"fcr":0.626808,"depl":0.008,"live":0.992,"umur":4.4,"adg":27.272727,"ip":431.624125,"fi":0.075217},{"bw":0.13,"fcr":0.658665,"depl":0.008,"live":0.992,"umur":4.8,"adg":27.083333,"ip":407.895769,"fi":0.085626},{"bw":0.14,"fcr":0.687078,"depl":0.008,"live":0.992,"umur":5.2,"adg":26.923077,"ip":388.714124,"fi":0.096191},{"bw":0.15,"fcr":0.712908,"depl":0.008,"live":0.992,"umur":5.5,"adg":27.272727,"ip":379.495607,"fi":0.106936},{"bw":0.16,"fcr":0.737016,"depl":0.008,"live":0.992,"umur":5.9,"adg":27.118644,"ip":365.008289,"fi":0.117923},{"bw":0.17,"fcr":0.75768,"depl":0.008,"live":0.992,"umur":6.2,"adg":27.419355,"ip":358.990603,"fi":0.128806},{"bw":0.18,"fcr":0.7749,"depl":0.008,"live":0.992,"umur":6.5,"adg":27.692308,"ip":354.507281,"fi":0.139482},{"bw":0.19,"fcr":0.790398,"depl":0.008,"live":0.992,"umur":6.9,"adg":27.536232,"ip":345.597307,"fi":0.150176},{"bw":0.2,"fcr":0.804174,"depl":0.014,"live":0.986,"umur":7.2,"adg":27.777778,"ip":340.584113,"fi":0.160835},{"bw":0.21,"fcr":0.816228,"depl":0.014,"live":0.986,"umur":7.5,"adg":28.0,"ip":338.238825,"fi":0.171408},{"bw":0.22,"fcr":0.82656,"depl":0.014,"live":0.986,"umur":7.7,"adg":28.571429,"ip":340.827388,"fi":0.181843},{"bw":0.23,"fcr":0.836892,"depl":0.014,"live":0.986,"umur":8.0,"adg":28.75,"ip":338.723515,"fi":0.192485},{"bw":0.24,"fcr":0.886666,"depl":0.014,"live":0.986,"umur":8.3,"adg":28.915663,"ip":321.551107,"fi":0.2128},{"bw":0.25,"fcr":0.896588,"depl":0.014,"live":0.986,"umur":8.5,"adg":29.411765,"ip":323.448451,"fi":0.224147},{"bw":0.26,"fcr":0.929,"depl":0.014,"live":0.986,"umur":8.7,"adg":29.885057,"ip":317.186939,"fi":0.24154},{"bw":0.27,"fcr":0.933333,"depl":0.014,"live":0.986,"umur":9.0,"adg":30.0,"ip":316.928571,"fi":0.252},{"bw":0.28,"fcr":0.941071,"depl":0.014,"live":0.986,"umur":9.2,"adg":30.434783,"ip":318.87798,"fi":0.2635},{"bw":0.29,"fcr":0.948276,"depl":0.014,"live":0.986,"umur":9.4,"adg":30.851064,"ip":320.783752,"fi":0.275},{"bw":0.3,"fcr":0.953333,"depl":0.018,"live":0.982,"umur":9.7,"adg":30.927835,"ip":318.578329,"fi":0.286},{"bw":0.31,"fcr":0.959677,"depl":0.018,"live":0.982,"umur":9.9,"adg":31.313131,"ip":320.414905,"fi":0.2975},{"bw":0.32,"fcr":0.965563,"depl":0.018,"live":0.982,"umur":10.1,"adg":31.683168,"ip":322.225348,"fi":0.30898},{"bw":0.33,"fcr":0.972576,"depl":0.018,"live":0.982,"umur":10.3,"adg":32.038835,"ip":323.492907,"fi":0.32095},{"bw":0.34,"fcr":0.9775,"depl":0.018,"live":0.982,"umur":10.5,"adg":32.380952,"ip":325.300207,"fi":0.33235},{"bw":0.35,"fcr":0.983771,"depl":0.018,"live":0.982,"umur":10.7,"adg":32.71028,"ip":326.513806,"fi":0.34432},{"bw":0.36,"fcr":0.988111,"depl":0.018,"live":0.982,"umur":10.9,"adg":33.027523,"ip":328.232596,"fi":0.35572},{"bw":0.37,"fcr":0.993514,"depl":0.018,"live":0.982,"umur":11.1,"adg":33.333333,"ip":329.470439,"fi":0.3676},{"bw":0.38,"fcr":1.001053,"depl":0.018,"live":0.982,"umur":11.3,"adg":33.628319,"ip":329.882843,"fi":0.3804},{"bw":0.39,"fcr":1.006564,"depl":0.018,"live":0.982,"umur":11.5,"adg":33.913043,"ip":330.854325,"fi":0.39256},{"bw":0.4,"fcr":1.0118,"depl":0.022,"live":0.978,"umur":11.7,"adg":34.188034,"ip":330.459552,"fi":0.40472},{"bw":0.41,"fcr":1.01678,"depl":0.022,"live":0.978,"umur":11.9,"adg":34.453782,"ip":331.39698,"fi":0.41688},{"bw":0.42,"fcr":1.023619,"depl":0.022,"live":0.978,"umur":12.1,"adg":34.710744,"ip":331.638098,"fi":0.42992},{"bw":0.43,"fcr":1.029953,"depl":0.022,"live":0.978,"umur":12.3,"adg":34.95935,"ip":331.959106,"fi":0.44288},{"bw":0.44,"fcr":1.036,"depl":0.022,"live":0.978,"umur":12.4,"adg":35.483871,"ip":334.973222,"fi":0.45584},{"bw":0.45,"fcr":1.041778,"depl":0.022,"live":0.978,"umur":12.6,"adg":35.714286,"ip":335.278523,"fi":0.4688},{"bw":0.46,"fcr":1.04887,"depl":0.022,"live":0.978,"umur":12.8,"adg":35.9375,"ip":335.092905,"fi":0.48248},{"bw":0.47,"fcr":1.054213,"depl":0.022,"live":0.978,"umur":13.0,"adg":36.153846,"ip":335.401569,"fi":0.49548},{"bw":0.48,"fcr":1.058458,"depl":0.022,"live":0.978,"umur":13.1,"adg":36.641221,"ip":338.55952,"fi":0.50806},{"bw":0.49,"fcr":1.062531,"depl":0.022,"live":0.978,"umur":13.3,"adg":36.842105,"ip":339.110973,"fi":0.52064},{"bw":0.5,"fcr":1.06644,"depl":0.024,"live":0.976,"umur":13.5,"adg":37.037037,"ip":338.960918,"fi":0.53322},{"bw":0.51,"fcr":1.070196,"depl":0.024,"live":0.976,"umur":13.7,"adg":37.226277,"ip":339.497102,"fi":0.5458},{"bw":0.52,"fcr":1.072385,"depl":0.024,"live":0.976,"umur":13.8,"adg":37.681159,"ip":342.94423,"fi":0.55764},{"bw":0.53,"fcr":1.076113,"depl":0.024,"live":0.976,"umur":14.0,"adg":37.857143,"ip":343.352086,"fi":0.57034},{"bw":0.54,"fcr":1.080741,"depl":0.024,"live":0.976,"umur":14.2,"adg":38.028169,"ip":343.426426,"fi":0.5836},{"bw":0.55,"fcr":1.083782,"depl":0.024,"live":0.976,"umur":14.3,"adg":38.461538,"ip":346.365485,"fi":0.59608},{"bw":0.56,"fcr":1.088107,"depl":0.024,"live":0.976,"umur":14.5,"adg":38.62069,"ip":346.41619,"fi":0.60934},{"bw":0.57,"fcr":1.090912,"depl":0.024,"live":0.976,"umur":14.7,"adg":38.77551,"ip":346.91055,"fi":0.62182},{"bw":0.58,"fcr":1.093621,"depl":0.024,"live":0.976,"umur":14.8,"adg":39.189189,"ip":349.743279,"fi":0.6343},{"bw":0.59,"fcr":1.097797,"depl":0.024,"live":0.976,"umur":15.0,"adg":39.333333,"ip":349.694406,"fi":0.6477},{"bw":0.6,"fcr":1.10075,"depl":0.026,"live":0.974,"umur":15.1,"adg":39.735099,"ip":351.596518,"fi":0.66045},{"bw":0.61,"fcr":1.103607,"depl":0.026,"live":0.974,"umur":15.3,"adg":39.869281,"ip":351.870687,"fi":0.6732},{"bw":0.62,"fcr":1.107742,"depl":0.026,"live":0.974,"umur":15.4,"adg":40.25974,"ip":353.990273,"fi":0.6868},{"bw":0.63,"fcr":1.110397,"depl":0.026,"live":0.974,"umur":15.6,"adg":40.384615,"ip":354.239264,"fi":0.69955},{"bw":0.64,"fcr":1.112969,"depl":0.026,"live":0.974,"umur":15.7,"adg":40.764331,"ip":356.743697,"fi":0.7123},{"bw":0.65,"fcr":1.116769,"depl":0.026,"live":0.974,"umur":15.9,"adg":40.880503,"ip":356.542865,"fi":0.7259},{"bw":0.66,"fcr":1.119985,"depl":0.026,"live":0.974,"umur":16.0,"adg":41.25,"ip":358.732532,"fi":0.73919},{"bw":0.67,"fcr":1.123642,"depl":0.026,"live":0.974,"umur":16.2,"adg":41.358025,"ip":358.501405,"fi":0.75284},{"bw":0.68,"fcr":1.125853,"depl":0.026,"live":0.974,"umur":16.3,"adg":41.717791,"ip":360.909737,"fi":0.76558},{"bw":0.69,"fcr":1.129319,"depl":0.026,"live":0.974,"umur":16.5,"adg":41.818182,"ip":360.667932,"fi":0.77923},{"bw":0.7,"fcr":1.132686,"depl":0.0285,"live":0.9715,"umur":16.6,"adg":42.168675,"ip":361.679034,"fi":0.79288},{"bw":0.71,"fcr":1.134676,"depl":0.0286,"live":0.9714,"umur":16.8,"adg":42.261905,"ip":361.805592,"fi":0.80562},{"bw":0.72,"fcr":1.137875,"depl":0.0286,"live":0.9714,"umur":16.9,"adg":42.60355,"ip":363.705053,"fi":0.81927},{"bw":0.73,"fcr":1.141548,"depl":0.0287,"live":0.9713,"umur":17.1,"adg":42.690058,"ip":363.233572,"fi":0.83333},{"bw":0.74,"fcr":1.147,"depl":0.0287,"live":0.9713,"umur":17.2,"adg":43.023256,"ip":364.328582,"fi":0.84878},{"bw":0.75,"fcr":1.150933,"depl":0.0288,"live":0.9712,"umur":17.4,"adg":43.103448,"ip":363.722796,"fi":0.8632},{"bw":0.76,"fcr":1.154763,"depl":0.0288,"live":0.9712,"umur":17.5,"adg":43.428571,"ip":365.250903,"fi":0.87762},{"bw":0.77,"fcr":1.159831,"depl":0.0289,"live":0.9711,"umur":17.6,"adg":43.75,"ip":366.308702,"fi":0.89307},{"bw":0.78,"fcr":1.163449,"depl":0.0289,"live":0.9711,"umur":17.8,"adg":43.820225,"ip":365.755874,"fi":0.90749},{"bw":0.79,"fcr":1.166975,"depl":0.029,"live":0.971,"umur":17.9,"adg":44.134078,"ip":367.224675,"fi":0.92191},{"bw":0.8,"fcr":1.171375,"depl":0.029,"live":0.971,"umur":18.1,"adg":44.198895,"ip":366.382474,"fi":0.9371},{"bw":0.81,"fcr":1.175926,"depl":0.0291,"live":0.9709,"umur":18.2,"adg":44.505495,"ip":367.458389,"fi":0.9525},{"bw":0.82,"fcr":1.179024,"depl":0.0291,"live":0.9709,"umur":18.3,"adg":44.808743,"ip":368.989896,"fi":0.9668},{"bw":0.83,"fcr":1.183373,"depl":0.0292,"live":0.9708,"umur":18.5,"adg":44.864865,"ip":368.056332,"fi":0.9822},{"bw":0.84,"fcr":1.187619,"depl":0.0292,"live":0.9708,"umur":18.6,"adg":45.16129,"ip":369.16367,"fi":0.9976},{"bw":0.85,"fcr":1.191765,"depl":0.0293,"live":0.9707,"umur":18.8,"adg":45.212766,"ip":368.26088,"fi":1.013},{"bw":0.86,"fcr":1.194535,"depl":0.0293,"live":0.9707,"umur":18.9,"adg":45.502646,"ip":369.762479,"fi":1.0273},{"bw":0.87,"fcr":1.198828,"depl":0.0294,"live":0.9706,"umur":19.0,"adg":45.789474,"ip":370.722727,"fi":1.04298},{"bw":0.88,"fcr":1.202045,"depl":0.0294,"live":0.9706,"umur":19.2,"adg":45.833333,"ip":370.084452,"fi":1.0578},{"bw":0.89,"fcr":1.205191,"depl":0.0295,"live":0.9705,"umur":19.3,"adg":46.11399,"ip":371.34053,"fi":1.07262},{"bw":0.9,"fcr":1.208267,"depl":0.0295,"live":0.9705,"umur":19.4,"adg":46.391753,"ip":372.626318,"fi":1.08744},{"bw":0.91,"fcr":1.211275,"depl":0.0296,"live":0.9704,"umur":19.6,"adg":46.428571,"ip":371.957614,"fi":1.10226},{"bw":0.92,"fcr":1.214217,"depl":0.0296,"live":0.9704,"umur":19.7,"adg":46.700508,"ip":373.22948,"fi":1.11708},{"bw":0.93,"fcr":1.218323,"depl":0.0297,"live":0.9703,"umur":19.8,"adg":46.969697,"ip":374.077422,"fi":1.13304},{"bw":0.94,"fcr":1.221128,"depl":0.0297,"live":0.9703,"umur":19.9,"adg":47.236181,"ip":375.335584,"fi":1.14786},{"bw":0.95,"fcr":1.224379,"depl":0.0298,"live":0.9702,"umur":20.1,"adg":47.263682,"ip":374.518232,"fi":1.16316},{"bw":0.96,"fcr":1.227604,"depl":0.0298,"live":0.9702,"umur":20.2,"adg":47.524752,"ip":375.597575,"fi":1.1785},{"bw":0.97,"fcr":1.230763,"depl":0.0299,"live":0.9701,"umur":20.3,"adg":47.783251,"ip":376.632514,"fi":1.19384},{"bw":0.98,"fcr":1.233857,"depl":0.0299,"live":0.9701,"umur":20.5,"adg":47.804878,"ip":375.858036,"fi":1.20918},{"bw":0.99,"fcr":1.236889,"depl":0.03,"live":0.97,"umur":20.6,"adg":48.058252,"ip":376.885145,"fi":1.22452},{"bw":1.0,"fcr":1.23986,"depl":0.03,"live":0.97,"umur":20.7,"adg":48.309179,"ip":377.945118,"fi":1.23986},{"bw":1.01,"fcr":1.242772,"depl":0.0302,"live":0.9698,"umur":20.8,"adg":48.557692,"ip":378.920989,"fi":1.2552},{"bw":1.02,"fcr":1.245775,"depl":0.0303,"live":0.9697,"umur":21.0,"adg":48.571429,"ip":378.075759,"fi":1.27069},{"bw":1.03,"fcr":1.24801,"depl":0.0305,"live":0.9695,"umur":21.1,"adg":48.815166,"ip":379.214224,"fi":1.28545},{"bw":1.04,"fcr":1.250202,"depl":0.0306,"live":0.9694,"umur":21.2,"adg":49.056604,"ip":380.382327,"fi":1.30021},{"bw":1.05,"fcr":1.253524,"depl":0.0308,"live":0.9692,"umur":21.4,"adg":49.065421,"ip":379.364199,"fi":1.3162},{"bw":1.06,"fcr":1.256783,"depl":0.0309,"live":0.9691,"umur":21.5,"adg":49.302326,"ip":380.16812,"fi":1.33219},{"bw":1.07,"fcr":1.258832,"depl":0.0311,"live":0.9689,"umur":21.6,"adg":49.537037,"ip":381.277595,"fi":1.34695},{"bw":1.08,"fcr":1.261981,"depl":0.0312,"live":0.9688,"umur":21.7,"adg":49.769585,"ip":382.071963,"fi":1.36294},{"bw":1.09,"fcr":1.263945,"depl":0.0314,"live":0.9686,"umur":21.9,"adg":49.771689,"ip":381.415807,"fi":1.3777},{"bw":1.1,"fcr":1.267127,"depl":0.0315,"live":0.9685,"umur":22.0,"adg":50.0,"ip":382.163663,"fi":1.39384},{"bw":1.11,"fcr":1.26955,"depl":0.0317,"live":0.9683,"umur":22.1,"adg":50.226244,"ip":383.081325,"fi":1.4092},{"bw":1.12,"fcr":1.271929,"depl":0.0318,"live":0.9682,"umur":22.2,"adg":50.45045,"ip":384.031991,"fi":1.42456},{"bw":1.13,"fcr":1.274265,"depl":0.032,"live":0.968,"umur":22.3,"adg":50.672646,"ip":384.936433,"fi":1.43992},{"bw":1.14,"fcr":1.276561,"depl":0.0321,"live":0.9679,"umur":22.5,"adg":50.666667,"ip":384.15909,"fi":1.45528},{"bw":1.15,"fcr":1.278817,"depl":0.0323,"live":0.9677,"umur":22.6,"adg":50.884956,"ip":385.053973,"fi":1.47064},{"bw":1.16,"fcr":1.282138,"depl":0.0324,"live":0.9676,"umur":22.7,"adg":51.101322,"ip":385.649918,"fi":1.48728},{"bw":1.17,"fcr":1.284308,"depl":0.0326,"live":0.9674,"umur":22.8,"adg":51.315789,"ip":386.534279,"fi":1.50264},{"bw":1.18,"fcr":1.286441,"depl":0.0327,"live":0.9673,"umur":23.0,"adg":51.304348,"ip":385.767463,"fi":1.518},{"bw":1.19,"fcr":1.289042,"depl":0.0329,"live":0.9671,"umur":23.1,"adg":51.515152,"ip":386.490916,"fi":1.53396},{"bw":1.2,"fcr":1.2916,"depl":0.033,"live":0.967,"umur":23.2,"adg":51.724138,"ip":387.250243,"fi":1.54992},{"bw":1.21,"fcr":1.294116,"depl":0.0332,"live":0.9668,"umur":23.3,"adg":51.93133,"ip":387.96539,"fi":1.56588},{"bw":1.22,"fcr":1.29659,"depl":0.0333,"live":0.9667,"umur":23.4,"adg":52.136752,"ip":388.716494,"fi":1.58184},{"bw":1.23,"fcr":1.299024,"depl":0.0335,"live":0.9665,"umur":23.6,"adg":52.118644,"ip":387.773085,"fi":1.5978},{"bw":1.24,"fcr":1.300347,"depl":0.0336,"live":0.9664,"umur":23.7,"adg":52.320675,"ip":388.840127,"fi":1.61243},{"bw":1.25,"fcr":1.302712,"depl":0.0338,"live":0.9662,"umur":23.8,"adg":52.521008,"ip":389.539655,"fi":1.62839},{"bw":1.26,"fcr":1.30504,"depl":0.0339,"live":0.9661,"umur":23.9,"adg":52.719665,"ip":390.275248,"fi":1.64435},{"bw":1.27,"fcr":1.307551,"depl":0.0341,"live":0.9659,"umur":24.0,"adg":52.916667,"ip":390.90025,"fi":1.66059},{"bw":1.28,"fcr":1.31018,"depl":0.0342,"live":0.9658,"umur":24.1,"adg":53.112033,"ip":391.515776,"fi":1.67703},{"bw":1.29,"fcr":1.312767,"depl":0.0344,"live":0.9656,"umur":24.3,"adg":53.08642,"ip":390.474697,"fi":1.69347},{"bw":1.3,"fcr":1.314262,"depl":0.0345,"live":0.9655,"umur":24.4,"adg":53.278689,"ip":391.40287,"fi":1.70854},{"bw":1.31,"fcr":1.316779,"depl":0.0346,"live":0.9654,"umur":24.5,"adg":53.469388,"ip":392.012339,"fi":1.72498},{"bw":1.32,"fcr":1.319258,"depl":0.0348,"live":0.9652,"umur":24.6,"adg":53.658537,"ip":392.578526,"fi":1.74142},{"bw":1.33,"fcr":1.321699,"depl":0.0349,"live":0.9651,"umur":24.7,"adg":53.846154,"ip":393.182664,"fi":1.75786},{"bw":1.34,"fcr":1.323082,"depl":0.0351,"live":0.9649,"umur":24.8,"adg":54.032258,"ip":394.047552,"fi":1.77293},{"bw":1.35,"fcr":1.325511,"depl":0.0352,"live":0.9648,"umur":25.0,"adg":54.0,"ip":393.049893,"fi":1.78944},{"bw":1.36,"fcr":1.328471,"depl":0.0354,"live":0.9646,"umur":25.1,"adg":54.183267,"ip":393.423684,"fi":1.80672},{"bw":1.37,"fcr":1.330336,"depl":0.0355,"live":0.9645,"umur":25.2,"adg":54.365079,"ip":394.14951,"fi":1.82256},{"bw":1.38,"fcr":1.333217,"depl":0.0357,"live":0.9643,"umur":25.3,"adg":54.545455,"ip":394.52067,"fi":1.83984},{"bw":1.39,"fcr":1.335022,"depl":0.0358,"live":0.9642,"umur":25.4,"adg":54.724409,"ip":395.23912,"fi":1.85568},{"bw":1.4,"fcr":1.337829,"depl":0.036,"live":0.964,"umur":25.5,"adg":54.901961,"ip":395.607414,"fi":1.87296},{"bw":1.41,"fcr":1.339574,"depl":0.0361,"live":0.9639,"umur":25.7,"adg":54.863813,"ip":394.776333,"fi":1.8888},{"bw":1.42,"fcr":1.34231,"depl":0.0363,"live":0.9637,"umur":25.8,"adg":55.03876,"ip":395.146116,"fi":1.90608},{"bw":1.43,"fcr":1.344,"depl":0.0364,"live":0.9636,"umur":25.9,"adg":55.212355,"ip":395.852868,"fi":1.92192},{"bw":1.44,"fcr":1.346875,"depl":0.0366,"live":0.9634,"umur":26.0,"adg":55.384615,"ip":396.158058,"fi":1.9395},{"bw":1.45,"fcr":1.348966,"depl":0.0367,"live":0.9633,"umur":26.1,"adg":55.555556,"ip":396.723756,"fi":1.956},{"bw":1.46,"fcr":1.351027,"depl":0.0369,"live":0.9631,"umur":26.2,"adg":55.725191,"ip":397.245322,"fi":1.9725},{"bw":1.47,"fcr":1.353061,"depl":0.037,"live":0.963,"umur":26.3,"adg":55.893536,"ip":397.805172,"fi":1.989},{"bw":1.48,"fcr":1.355068,"depl":0.0372,"live":0.9628,"umur":26.5,"adg":55.849057,"ip":396.817642,"fi":2.0055},{"bw":1.49,"fcr":1.358054,"depl":0.0373,"live":0.9627,"umur":26.6,"adg":56.015038,"ip":397.080594,"fi":2.0235},{"bw":1.5,"fcr":1.36,"depl":0.0375,"live":0.9625,"umur":26.7,"adg":56.179775,"ip":397.595836,"fi":2.04},{"bw":1.51,"fcr":1.361921,"depl":0.0376,"live":0.9624,"umur":26.8,"adg":56.343284,"ip":398.149341,"fi":2.0565},{"bw":1.52,"fcr":1.363816,"depl":0.0378,"live":0.9622,"umur":26.9,"adg":56.505576,"ip":398.658425,"fi":2.073},{"bw":1.53,"fcr":1.366902,"depl":0.0379,"live":0.9621,"umur":27.0,"adg":56.666667,"ip":398.850843,"fi":2.09136},{"bw":1.54,"fcr":1.369169,"depl":0.0381,"live":0.9619,"umur":27.1,"adg":56.826568,"ip":399.231087,"fi":2.10852},{"bw":1.55,"fcr":1.371406,"depl":0.0382,"live":0.9618,"umur":27.2,"adg":56.985294,"ip":399.651437,"fi":2.12568},{"bw":1.56,"fcr":1.373615,"depl":0.0384,"live":0.9616,"umur":27.3,"adg":57.142857,"ip":400.0288,"fi":2.14284},{"bw":1.57,"fcr":1.375796,"depl":0.0385,"live":0.9615,"umur":27.5,"adg":57.090909,"ip":398.990126,"fi":2.16},{"bw":1.58,"fcr":1.377949,"depl":0.0387,"live":0.9613,"umur":27.6,"adg":57.246377,"ip":399.36839,"fi":2.17716},{"bw":1.59,"fcr":1.380075,"depl":0.0388,"live":0.9612,"umur":27.7,"adg":57.400722,"ip":399.786643,"fi":2.19432},{"bw":1.6,"fcr":1.382175,"depl":0.039,"live":0.961,"umur":27.8,"adg":57.553957,"ip":400.16172,"fi":2.21148},{"bw":1.61,"fcr":1.385217,"depl":0.0391,"live":0.9609,"umur":27.9,"adg":57.706093,"ip":400.296627,"fi":2.2302},{"bw":1.62,"fcr":1.387407,"depl":0.0393,"live":0.9607,"umur":28.0,"adg":57.857143,"ip":400.627507,"fi":2.2476},{"bw":1.63,"fcr":1.389693,"depl":0.0394,"live":0.9606,"umur":28.1,"adg":58.007117,"ip":400.963572,"fi":2.2652},{"bw":1.64,"fcr":1.390976,"depl":0.0396,"live":0.9604,"umur":28.2,"adg":58.156028,"ip":401.53867,"fi":2.2812},{"bw":1.65,"fcr":1.393212,"depl":0.0397,"live":0.9603,"umur":28.3,"adg":58.303887,"ip":401.871486,"fi":2.2988},{"bw":1.66,"fcr":1.396386,"depl":0.0399,"live":0.9601,"umur":28.5,"adg":58.245614,"ip":400.474026,"fi":2.318},{"bw":1.67,"fcr":1.397605,"depl":0.04,"live":0.96,"umur":28.6,"adg":58.391608,"ip":401.085804,"fi":2.334},{"bw":1.68,"fcr":1.399762,"depl":0.0402,"live":0.9598,"umur":28.7,"adg":58.536585,"ip":401.378366,"fi":2.3516},{"bw":1.69,"fcr":1.401893,"depl":0.0403,"live":0.9597,"umur":28.8,"adg":58.680556,"ip":401.711896,"fi":2.3692},{"bw":1.7,"fcr":1.404,"depl":0.0405,"live":0.9595,"umur":28.9,"adg":58.823529,"ip":402.002681,"fi":2.3868},{"bw":1.71,"fcr":1.406175,"depl":0.0406,"live":0.9594,"umur":29.0,"adg":58.965517,"ip":402.307676,"fi":2.40456},{"bw":1.72,"fcr":1.408488,"depl":0.0408,"live":0.9592,"umur":29.1,"adg":59.106529,"ip":402.523613,"fi":2.4226},{"bw":1.73,"fcr":1.410775,"depl":0.0409,"live":0.9591,"umur":29.2,"adg":59.246575,"ip":402.781506,"fi":2.44064},{"bw":1.74,"fcr":1.413034,"depl":0.0411,"live":0.9589,"umur":29.3,"adg":59.385666,"ip":402.997346,"fi":2.45868},{"bw":1.75,"fcr":1.415269,"depl":0.0412,"live":0.9588,"umur":29.4,"adg":59.52381,"ip":403.255112,"fi":2.47672},{"bw":1.76,"fcr":1.417477,"depl":0.0414,"live":0.9586,"umur":29.5,"adg":59.661017,"ip":403.470672,"fi":2.49476},{"bw":1.77,"fcr":1.419661,"depl":0.0415,"live":0.9585,"umur":29.7,"adg":59.59596,"ip":402.368781,"fi":2.5128},{"bw":1.78,"fcr":1.420899,"depl":0.0417,"live":0.9583,"umur":29.8,"adg":59.731544,"ip":402.848783,"fi":2.5292},{"bw":1.79,"fcr":1.423039,"depl":0.0418,"live":0.9582,"umur":29.9,"adg":59.866221,"ip":403.107774,"fi":2.54724},{"bw":1.8,"fcr":1.425189,"depl":0.042,"live":0.958,"umur":30.0,"adg":60.0,"ip":403.31496,"fi":2.56534},{"bw":1.81,"fcr":1.427464,"depl":0.0421,"live":0.9579,"umur":30.1,"adg":60.13289,"ip":403.521855,"fi":2.58371},{"bw":1.82,"fcr":1.428797,"depl":0.0423,"live":0.9577,"umur":30.2,"adg":60.264901,"ip":403.946168,"fi":2.60041},{"bw":1.83,"fcr":1.431027,"depl":0.0424,"live":0.9576,"umur":30.3,"adg":60.39604,"ip":404.151945,"fi":2.61878},{"bw":1.84,"fcr":1.433234,"depl":0.0426,"live":0.9574,"umur":30.4,"adg":60.526316,"ip":404.315744,"fi":2.63715},{"bw":1.85,"fcr":1.434514,"depl":0.0427,"live":0.9573,"umur":30.5,"adg":60.655738,"ip":404.776512,"fi":2.65385},{"bw":1.86,"fcr":1.436677,"depl":0.0429,"live":0.9571,"umur":30.6,"adg":60.784314,"ip":404.938965,"fi":2.67222},{"bw":1.87,"fcr":1.438818,"depl":0.043,"live":0.957,"umur":30.7,"adg":60.912052,"ip":405.143851,"fi":2.69059},{"bw":1.88,"fcr":1.440048,"depl":0.0432,"live":0.9568,"umur":30.8,"adg":61.038961,"ip":405.556503,"fi":2.70729},{"bw":1.89,"fcr":1.442148,"depl":0.0433,"live":0.9567,"umur":30.9,"adg":61.165049,"ip":405.759991,"fi":2.72566},{"bw":1.9,"fcr":1.444368,"depl":0.0435,"live":0.9565,"umur":31.0,"adg":61.290323,"ip":405.881164,"fi":2.7443},{"bw":1.91,"fcr":1.445707,"depl":0.0436,"live":0.9564,"umur":31.1,"adg":61.414791,"ip":406.286433,"fi":2.7613},{"bw":1.92,"fcr":1.447917,"depl":0.0438,"live":0.9562,"umur":31.3,"adg":61.341853,"ip":405.099832,"fi":2.78},{"bw":1.93,"fcr":1.449223,"depl":0.0439,"live":0.9561,"umur":31.4,"adg":61.464968,"ip":405.504634,"fi":2.797},{"bw":1.94,"fcr":1.451392,"depl":0.0441,"live":0.9559,"umur":31.5,"adg":61.587302,"ip":405.619651,"fi":2.8157},{"bw":1.95,"fcr":1.453538,"depl":0.0442,"live":0.9558,"umur":31.6,"adg":61.708861,"ip":405.777561,"fi":2.8344},{"bw":1.96,"fcr":1.454796,"depl":0.0444,"live":0.9556,"umur":31.7,"adg":61.829653,"ip":406.135429,"fi":2.8514},{"bw":1.97,"fcr":1.456904,"depl":0.0445,"live":0.9555,"umur":31.8,"adg":61.949686,"ip":406.292677,"fi":2.8701},{"bw":1.98,"fcr":1.45899,"depl":0.0447,"live":0.9553,"umur":31.9,"adg":62.068966,"ip":406.407767,"fi":2.8888},{"bw":1.99,"fcr":1.460281,"depl":0.0448,"live":0.9552,"umur":32.0,"adg":62.1875,"ip":406.781184,"fi":2.90596},{"bw":2.0,"fcr":1.46255,"depl":0.045,"live":0.955,"umur":32.1,"adg":62.305296,"ip":406.834348,"fi":2.9251},{"bw":2.01,"fcr":1.46393,"depl":0.0451,"live":0.9549,"umur":32.2,"adg":62.42236,"ip":407.171775,"fi":2.9425},{"bw":2.02,"fcr":1.466158,"depl":0.0453,"live":0.9547,"umur":32.3,"adg":62.5387,"ip":407.225413,"fi":2.96164},{"bw":2.03,"fcr":1.467507,"depl":0.0454,"live":0.9546,"umur":32.4,"adg":62.654321,"ip":407.56057,"fi":2.97904},{"bw":2.04,"fcr":1.469696,"depl":0.0456,"live":0.9544,"umur":32.5,"adg":62.769231,"ip":407.614572,"fi":2.99818},{"bw":2.05,"fcr":1.471015,"depl":0.0457,"live":0.9543,"umur":32.6,"adg":62.883436,"ip":407.947421,"fi":3.01558},{"bw":2.06,"fcr":1.473165,"depl":0.0459,"live":0.9541,"umur":32.7,"adg":62.996942,"ip":408.001685,"fi":3.03472},{"bw":2.07,"fcr":1.474454,"depl":0.046,"live":0.954,"umur":32.8,"adg":63.109756,"ip":408.332189,"fi":3.05212},{"bw":2.08,"fcr":1.476567,"depl":0.0462,"live":0.9538,"umur":32.9,"adg":63.221884,"ip":408.386622,"fi":3.07126},{"bw":2.09,"fcr":1.477957,"depl":0.0463,"live":0.9537,"umur":33.0,"adg":63.333333,"ip":408.679025,"fi":3.08893},{"bw":2.1,"fcr":1.48019,"depl":0.0465,"live":0.9535,"umur":33.2,"adg":63.253012,"ip":407.459364,"fi":3.1084},{"bw":2.11,"fcr":1.481564,"depl":0.0466,"live":0.9534,"umur":33.3,"adg":63.363363,"ip":407.74905,"fi":3.1261},{"bw":2.12,"fcr":1.483759,"depl":0.0468,"live":0.9532,"umur":33.4,"adg":63.473054,"ip":407.764989,"fi":3.14557},{"bw":2.13,"fcr":1.485103,"depl":0.0469,"live":0.9531,"umur":33.5,"adg":63.58209,"ip":408.05303,"fi":3.16327},{"bw":2.14,"fcr":1.487262,"depl":0.0471,"live":0.9529,"umur":33.6,"adg":63.690476,"ip":408.06978,"fi":3.18274},{"bw":2.15,"fcr":1.488577,"depl":0.0472,"live":0.9528,"umur":33.7,"adg":63.79822,"ip":408.356128,"fi":3.20044},{"bw":2.16,"fcr":1.48988,"depl":0.0474,"live":0.9526,"umur":33.8,"adg":63.905325,"ip":408.598197,"fi":3.21814},{"bw":2.17,"fcr":1.491986,"depl":0.0475,"live":0.9525,"umur":33.9,"adg":64.011799,"ip":408.658203,"fi":3.23761},{"bw":2.18,"fcr":1.493289,"depl":0.0477,"live":0.9523,"umur":34.0,"adg":64.117647,"ip":408.890949,"fi":3.25537},{"bw":2.19,"fcr":1.495461,"depl":0.0478,"live":0.9522,"umur":34.1,"adg":64.222874,"ip":408.924157,"fi":3.27506},{"bw":2.2,"fcr":1.4968,"depl":0.048,"live":0.952,"umur":34.2,"adg":64.327485,"ip":409.137935,"fi":3.29296},{"bw":2.21,"fcr":1.498127,"depl":0.0481,"live":0.9519,"umur":34.3,"adg":64.431487,"ip":409.393494,"fi":3.31086},{"bw":2.22,"fcr":1.500248,"depl":0.0483,"live":0.9517,"umur":34.4,"adg":64.534884,"ip":409.384709,"fi":3.33055},{"bw":2.23,"fcr":1.501547,"depl":0.0484,"live":0.9516,"umur":34.5,"adg":64.637681,"ip":409.638952,"fi":3.34845},{"bw":2.24,"fcr":1.503634,"depl":0.0486,"live":0.9514,"umur":34.6,"adg":64.739884,"ip":409.631127,"fi":3.36814},{"bw":2.25,"fcr":1.504907,"depl":0.0487,"live":0.9513,"umur":34.7,"adg":64.841499,"ip":409.884008,"fi":3.38604},{"bw":2.26,"fcr":1.50696,"depl":0.0489,"live":0.9511,"umur":34.8,"adg":64.942529,"ip":409.877049,"fi":3.40573},{"bw":2.27,"fcr":1.508207,"depl":0.049,"live":0.951,"umur":34.9,"adg":65.04298,"ip":410.12853,"fi":3.42363},{"bw":2.28,"fcr":1.509535,"depl":0.0492,"live":0.9508,"umur":35.0,"adg":65.142857,"ip":410.310625,"fi":3.44174},{"bw":2.29,"fcr":1.511686,"depl":0.0493,"live":0.9507,"umur":35.1,"adg":65.242165,"ip":410.30838,"fi":3.46176},{"bw":2.3,"fcr":1.513026,"depl":0.0495,"live":0.9505,"umur":35.2,"adg":65.340909,"ip":410.478938,"fi":3.47996},{"bw":2.31,"fcr":1.515143,"depl":0.0496,"live":0.9504,"umur":35.3,"adg":65.439093,"ip":410.478221,"fi":3.49998},{"bw":2.32,"fcr":1.516457,"depl":0.0498,"live":0.9502,"umur":35.4,"adg":65.536723,"ip":410.647968,"fi":3.51818},{"bw":2.33,"fcr":1.51776,"depl":0.0499,"live":0.9501,"umur":35.5,"adg":65.633803,"ip":410.860018,"fi":3.53638},{"bw":2.34,"fcr":1.519829,"depl":0.0501,"live":0.9499,"umur":35.7,"adg":65.546218,"ip":409.666814,"fi":3.5564},{"bw":2.35,"fcr":1.521106,"depl":0.0502,"live":0.9498,"umur":35.8,"adg":65.642458,"ip":409.880646,"fi":3.5746},{"bw":2.36,"fcr":1.523144,"depl":0.0504,"live":0.9496,"umur":35.9,"adg":65.738162,"ip":409.842769,"fi":3.59462},{"bw":2.37,"fcr":1.524414,"depl":0.0505,"live":0.9495,"umur":36.0,"adg":65.833333,"ip":410.051144,"fi":3.61286},{"bw":2.38,"fcr":1.525824,"depl":0.0507,"live":0.9493,"umur":36.1,"adg":65.927978,"ip":410.174756,"fi":3.63146},{"bw":2.39,"fcr":1.528,"depl":0.0508,"live":0.9492,"umur":36.2,"adg":66.022099,"ip":410.132047,"fi":3.65192},{"bw":2.4,"fcr":1.529383,"depl":0.051,"live":0.949,"umur":36.3,"adg":66.115702,"ip":410.25556,"fi":3.67052},{"bw":2.41,"fcr":1.530755,"depl":0.0511,"live":0.9489,"umur":36.4,"adg":66.208791,"ip":410.421748,"fi":3.68912},{"bw":2.42,"fcr":1.532884,"depl":0.0513,"live":0.9487,"umur":36.5,"adg":66.30137,"ip":410.338273,"fi":3.70958},{"bw":2.43,"fcr":1.53423,"depl":0.0514,"live":0.9486,"umur":36.6,"adg":66.393443,"ip":410.504299,"fi":3.72818},{"bw":2.44,"fcr":1.535566,"depl":0.0516,"live":0.9484,"umur":36.7,"adg":66.485014,"ip":410.626469,"fi":3.74678},{"bw":2.45,"fcr":1.537649,"depl":0.0517,"live":0.9483,"umur":36.8,"adg":66.576087,"ip":410.588529,"fi":3.76724},{"bw":2.46,"fcr":1.538959,"depl":0.0519,"live":0.9481,"umur":36.9,"adg":66.666667,"ip":410.710437,"fi":3.78584},{"bw":2.47,"fcr":1.540324,"depl":0.052,"live":0.948,"umur":37.0,"adg":66.756757,"ip":410.857781,"fi":3.8046},{"bw":2.48,"fcr":1.541774,"depl":0.0522,"live":0.9478,"umur":37.1,"adg":66.846361,"ip":410.93554,"fi":3.8236},{"bw":2.49,"fcr":1.543976,"depl":0.0523,"live":0.9477,"umur":37.2,"adg":66.935484,"ip":410.853291,"fi":3.8445},{"bw":2.5,"fcr":1.5454,"depl":0.0525,"live":0.9475,"umur":37.3,"adg":67.024129,"ip":410.931551,"fi":3.8635},{"bw":2.51,"fcr":1.546813,"depl":0.0526,"live":0.9474,"umur":37.4,"adg":67.112299,"ip":411.052938,"fi":3.8825},{"bw":2.52,"fcr":1.548968,"depl":0.0528,"live":0.9472,"umur":37.5,"adg":67.2,"ip":410.930565,"fi":3.9034},{"bw":2.53,"fcr":1.550356,"depl":0.0529,"live":0.9471,"umur":37.6,"adg":67.287234,"ip":411.052367,"fi":3.9224},{"bw":2.54,"fcr":1.551732,"depl":0.0531,"live":0.9469,"umur":37.7,"adg":67.374005,"ip":411.130491,"fi":3.9414},{"bw":2.55,"fcr":1.553843,"depl":0.0532,"live":0.9468,"umur":37.8,"adg":67.460317,"ip":411.054546,"fi":3.9623},{"bw":2.56,"fcr":1.555195,"depl":0.0534,"live":0.9466,"umur":37.9,"adg":67.546174,"ip":411.132981,"fi":3.9813},{"bw":2.57,"fcr":1.556619,"depl":0.0535,"live":0.9465,"umur":38.0,"adg":67.631579,"ip":411.232953,"fi":4.00051},{"bw":2.58,"fcr":1.558066,"depl":0.0537,"live":0.9463,"umur":38.1,"adg":67.716535,"ip":411.280151,"fi":4.01981},{"bw":2.59,"fcr":1.560247,"depl":0.0538,"live":0.9462,"umur":38.2,"adg":67.801047,"ip":411.174298,"fi":4.04104},{"bw":2.6,"fcr":1.561669,"depl":0.054,"live":0.946,"umur":38.3,"adg":67.885117,"ip":411.222299,"fi":4.06034},{"bw":2.61,"fcr":1.56308,"depl":0.0541,"live":0.9459,"umur":38.4,"adg":67.96875,"ip":411.313699,"fi":4.07964},{"bw":2.62,"fcr":1.564481,"depl":0.0543,"live":0.9457,"umur":38.5,"adg":68.051948,"ip":411.361536,"fi":4.09894},{"bw":2.63,"fcr":1.565871,"depl":0.0544,"live":0.9456,"umur":38.6,"adg":68.134715,"ip":411.452782,"fi":4.11824},{"bw":2.64,"fcr":1.567981,"depl":0.0546,"live":0.9454,"umur":38.7,"adg":68.217054,"ip":411.308559,"fi":4.13947},{"bw":2.65,"fcr":1.569347,"depl":0.0547,"live":0.9453,"umur":38.8,"adg":68.298969,"ip":411.400465,"fi":4.15877},{"bw":2.66,"fcr":1.570703,"depl":0.0549,"live":0.9451,"umur":38.9,"adg":68.380463,"ip":411.448727,"fi":4.17807},{"bw":2.67,"fcr":1.572184,"depl":0.055,"live":0.945,"umur":39.0,"adg":68.461538,"ip":411.505101,"fi":4.19773},{"bw":2.68,"fcr":1.574403,"depl":0.0552,"live":0.9448,"umur":39.1,"adg":68.542199,"ip":411.322074,"fi":4.2194},{"bw":2.69,"fcr":1.575874,"depl":0.0553,"live":0.9447,"umur":39.3,"adg":68.447837,"ip":410.329049,"fi":4.2391},{"bw":2.7,"fcr":1.577333,"depl":0.0555,"live":0.9445,"umur":39.4,"adg":68.527919,"ip":410.34205,"fi":4.2588},{"bw":2.71,"fcr":1.579509,"depl":0.0556,"live":0.9444,"umur":39.5,"adg":68.607595,"ip":410.209777,"fi":4.28047},{"bw":2.72,"fcr":1.580945,"depl":0.0558,"live":0.9442,"umur":39.6,"adg":68.686869,"ip":410.223932,"fi":4.30017},{"bw":2.73,"fcr":1.58237,"depl":0.0559,"live":0.9441,"umur":39.7,"adg":68.765743,"ip":410.281663,"fi":4.31987},{"bw":2.74,"fcr":1.583785,"depl":0.0561,"live":0.9439,"umur":39.8,"adg":68.844221,"ip":410.296055,"fi":4.33957},{"bw":2.75,"fcr":1.585905,"depl":0.0562,"live":0.9438,"umur":39.9,"adg":68.922306,"ip":410.168664,"fi":4.36124},{"bw":2.76,"fcr":1.587341,"depl":0.0564,"live":0.9436,"umur":40.0,"adg":69.0,"ip":410.172844,"fi":4.38106},{"bw":2.77,"fcr":1.588939,"depl":0.0565,"live":0.9435,"umur":40.1,"adg":69.077307,"ip":410.175936,"fi":4.40136},{"bw":2.78,"fcr":1.591255,"depl":0.0567,"live":0.9433,"umur":40.2,"adg":69.154229,"ip":409.947921,"fi":4.42369},{"bw":2.79,"fcr":1.592828,"depl":0.0568,"live":0.9432,"umur":40.3,"adg":69.230769,"ip":409.95301,"fi":4.44399},{"bw":2.8,"fcr":1.594389,"depl":0.057,"live":0.943,"umur":40.4,"adg":69.306931,"ip":409.915171,"fi":4.46429},{"bw":2.81,"fcr":1.596662,"depl":0.0571,"live":0.9429,"umur":40.5,"adg":69.382716,"ip":409.73585,"fi":4.48662},{"bw":2.82,"fcr":1.598199,"depl":0.0573,"live":0.9427,"umur":40.6,"adg":69.458128,"ip":409.699884,"fi":4.50692},{"bw":2.83,"fcr":1.599724,"depl":0.0574,"live":0.9426,"umur":40.7,"adg":69.53317,"ip":409.707862,"fi":4.52722},{"bw":2.84,"fcr":1.601954,"depl":0.0576,"live":0.9424,"umur":40.8,"adg":69.607843,"ip":409.490049,"fi":4.54955},{"bw":2.85,"fcr":1.603456,"depl":0.0577,"live":0.9423,"umur":40.9,"adg":69.682152,"ip":409.499766,"fi":4.56985},{"bw":2.86,"fcr":1.605035,"depl":0.0579,"live":0.9421,"umur":41.0,"adg":69.756098,"ip":409.444161,"fi":4.5904},{"bw":2.87,"fcr":1.60669,"depl":0.058,"live":0.942,"umur":41.1,"adg":69.829684,"ip":409.410442,"fi":4.6112},{"bw":2.88,"fcr":1.609056,"depl":0.0582,"live":0.9418,"umur":41.2,"adg":69.902913,"ip":409.150342,"fi":4.63408},{"bw":2.89,"fcr":1.610685,"depl":0.0583,"live":0.9417,"umur":41.3,"adg":69.975787,"ip":409.119062,"fi":4.65488},{"bw":2.9,"fcr":1.612303,"depl":0.0585,"live":0.9415,"umur":41.4,"adg":70.048309,"ip":409.045104,"fi":4.67568},{"bw":2.91,"fcr":1.614625,"depl":0.0586,"live":0.9414,"umur":41.5,"adg":70.120482,"ip":408.834275,"fi":4.69856},{"bw":2.92,"fcr":1.616219,"depl":0.0588,"live":0.9412,"umur":41.6,"adg":70.192308,"ip":408.762629,"fi":4.71936},{"bw":2.93,"fcr":1.617802,"depl":0.0589,"live":0.9411,"umur":41.7,"adg":70.263789,"ip":408.735122,"fi":4.74016},{"bw":2.94,"fcr":1.620082,"depl":0.0591,"live":0.9409,"umur":41.8,"adg":70.334928,"ip":408.486416,"fi":4.76304},{"bw":2.95,"fcr":1.621641,"depl":0.0592,"live":0.9408,"umur":41.9,"adg":70.405728,"ip":408.461071,"fi":4.78384},{"bw":2.96,"fcr":1.623324,"depl":0.0594,"live":0.9406,"umur":42.0,"adg":70.47619,"ip":408.358969,"fi":4.80504},{"bw":2.97,"fcr":1.625747,"depl":0.0595,"live":0.9405,"umur":42.1,"adg":70.546318,"ip":408.112658,"fi":4.82847},{"bw":2.98,"fcr":1.62744,"depl":0.0597,"live":0.9403,"umur":42.2,"adg":70.616114,"ip":408.004892,"fi":4.84977},{"bw":2.99,"fcr":1.62912,"depl":0.0598,"live":0.9402,"umur":42.3,"adg":70.685579,"ip":407.941497,"fi":4.87107},{"bw":3.0,"fcr":1.6315,"depl":0.06,"live":0.94,"umur":42.4,"adg":70.754717,"ip":407.658192,"fi":4.8945}];
+
+function getPerformanceStandard(age){
+  const n=parseFloat(String(age).replace(',','.'));
+  if(!Number.isFinite(n)||!performanceStandards.length)return null;
+  let best=performanceStandards[0],dist=Math.abs(n-best.umur);
+  for(const s of performanceStandards){
+    const d=Math.abs(n-s.umur);
+    if(d<dist){best=s;dist=d}
+  }
+  return best;
+}
+function pct(v){return (v*100).toFixed(1)+'%'}
+function comparePerformance(r){
+  const age=parseFloat(String(r.umur).replace(',','.'));
+  const s=getPerformanceStandard(age);
+  if(!s)return {has:false,text:'Isi UMUR untuk membaca benchmark performance.'};
+  const checks=[];
+  const bw=parseFloat(String(r.bw).replace(',','.'));
+  const fcr=parseFloat(String(r.fcr).replace(',','.'));
+  const fi=parseFloat(String(r.fi).replace(',','.'));
+
+  if(Number.isFinite(bw)){
+    const d=(bw-s.bw)/s.bw;
+    checks.push({name:'BW',diff:d,good:d>=0,detail:`${bw} kg vs std ${s.bw} kg (${d>=0?'+':''}${(d*100).toFixed(1)}%)`});
+  }
+  if(Number.isFinite(fcr)){
+    const d=(fcr-s.fcr)/s.fcr;
+    checks.push({name:'FCR',diff:d,good:d<=0,detail:`${fcr} vs std ${s.fcr} (${d>=0?'+':''}${(d*100).toFixed(1)}%)`});
+  }
+  if(Number.isFinite(fi)){
+    const d=(fi-s.fi)/s.fi;
+    checks.push({name:'FI CUM',diff:d,good:d<=0,detail:`${fi} kg vs std ${s.fi} kg (${d>=0?'+':''}${(d*100).toFixed(1)}%)`});
+  }
+  if(!checks.length){
+    return {has:false,text:`Benchmark umur ${s.umur} hari: BW ${s.bw} kg • FCR ${s.fcr} • FI CUM ${s.fi} kg • ADG ${s.adg} • IP ${s.ip}.`};
+  }
+  const bad=checks.filter(x=>!x.good);
+  const details=checks.map(x=>x.detail).join('; ');
+  return {
+    has:true,
+    standard:s,
+    checks,
+    score:checks.filter(x=>x.good).length,
+    text:`Benchmark umur ${s.umur} hari — ${details}.`+
+      (bad.length?` ${bad.map(x=>x.name).join(', ')} berada di bawah/lebih tinggi dari benchmark sesuai arah indikator.`:' Semua parameter yang diisi berada pada atau lebih baik dari benchmark.')
+  };
+}
+function conclusion(r){
+  const missing=[];
+  ['plasma','populasi','kecamatan','problem','handling','agenda'].forEach(f=>{if(!String(r[f]??'').trim())missing.push(f.toUpperCase())});
+  const targets=['umur','fcr','bw','diffFcr','fi'].filter(f=>String(r[f]??'').trim()).length;
+  const parts=[];
+  if(missing.length) parts.push('Data belum lengkap: '+missing.slice(0,3).join(', ')+(missing.length>3?'...':'')+'.');
+  else parts.push('Identitas, problem, handling dan agenda sudah terisi.');
+  if(targets) parts.push(targets+' dari 5 parameter target terisi.');
+  else parts.push('Parameter target belum diisi.');
+  if(r.ceklist) parts.push('Ceklist PH sudah dicentang.'); else parts.push('Ceklist PH belum dicentang.');
+  if(r.progress==='Selesai') parts.push('Progress: selesai.');
+  else if(r.progress==='Proses') parts.push('Progress: masih dalam proses.');
+  else parts.push('Progress: belum dimulai.');
+
+  const perf=comparePerformance(r);
+  let cls='info';
+  if(perf.has){
+    parts.push(perf.text);
+    if(perf.score===perf.checks.length && perf.checks.length>0) cls='good';
+    else cls='warn';
+  }else if(perf.text) parts.push(perf.text);
+
+  if(String(r.diffFcr).trim()){
+    const manual=parseFloat(String(r.diffFcr).replace(',','.'));
+    const s=getPerformanceStandard(r.umur);
+    if(Number.isFinite(manual) && s && Number.isFinite(parseFloat(r.fcr))){
+      const calculated=parseFloat(r.fcr)-s.fcr;
+      parts.push(`DIFF FCR input ${r.diffFcr}; selisih terhadap FCR benchmark ≈ ${calculated.toFixed(3)}.`);
+    }else parts.push('DIFF FCR tercatat '+r.diffFcr+'.');
+  }
+  if(String(r.problem).trim() && String(r.handling).trim()) parts.push('Handling tersedia untuk problem yang dicatat.');
+  else if(String(r.problem).trim()) parts.push('Problem sudah dicatat, tetapi handling belum diisi.');
+  if(r.progress==='Selesai' && missing.length===0 && (!perf.has || perf.score===perf.checks.length)) cls='good';
+  else if(missing.length || (perf.has && perf.score<perf.checks.length)) cls='warn';
+  return {text:parts.join(' '),cls};
+}
+
+function render(rows=getData()){
+ tbody.innerHTML=rows.map((r,i)=>{
+  const c=conclusion(r);
+  return `<tr>
+   <td class="no">${i+1}</td>
+   <td contenteditable data-f="plasma">${esc(r.plasma)}</td><td contenteditable data-f="populasi">${esc(r.populasi)}</td>
+   <td contenteditable data-f="kecamatan">${esc(r.kecamatan)}</td><td contenteditable data-f="problem">${esc(r.problem)}</td>
+   <td contenteditable data-f="handling">${esc(r.handling)}</td><td contenteditable data-f="agenda">${esc(r.agenda)}</td>
+   <td contenteditable data-f="ts">${esc(r.ts)}</td><td><input class="date" type="date" data-f="tanggal" value="${esc(r.tanggal)}"></td>
+   <td class="center"><input class="check" type="checkbox" data-f="ceklist" ${r.ceklist?'checked':''}></td>
+   <td contenteditable data-f="umur">${esc(r.umur)}</td><td contenteditable data-f="fcr">${esc(r.fcr)}</td>
+   <td contenteditable data-f="bw">${esc(r.bw)}</td><td contenteditable data-f="diffFcr">${esc(r.diffFcr)}</td>
+   <td contenteditable data-f="fi">${esc(r.fi)}</td><td contenteditable data-f="depls">${esc(r.depls)}</td><td contenteditable data-f="adg">${esc(r.adg)}</td>
+   <td class="progress" data-status="${esc(r.progress)}"><select data-f="progress">
+    <option ${r.progress==='Belum'?'selected':''}>Belum</option><option ${r.progress==='Proses'?'selected':''}>Proses</option><option ${r.progress==='Selesai'?'selected':''}>Selesai</option>
+   </select></td>
+   <td class="conclusion ${c.cls}"><b>Analisis</b>${esc(c.text)}</td>
+  </tr>`
+ }).join('');
+ updateStats();filterRows();
+}
+
+function collect(){
+ return [...tbody.querySelectorAll('tr')].map(tr=>{
+  const o={};fields.forEach(f=>{const e=tr.querySelector(`[data-f="${f}"]`);o[f]=e?.type==='checkbox'?e.checked:(e?.value??e?.innerText.trim()??'')});return o
+ })
+}
+function save(show=true){localStorage.setItem(KEY,JSON.stringify(collect()));updateStats();if(show)toast('Data berhasil disimpan')}
+function updateStats(){
+ const d=collect();total.textContent=d.length;
+ filled.textContent=d.filter(x=>x.plasma||x.problem||x.kecamatan).length;
+ done.textContent=d.filter(x=>x.progress==='Selesai').length;
+ process.textContent=d.filter(x=>x.progress==='Proses').length;
+ document.querySelectorAll('.progress').forEach(x=>x.dataset.status=x.querySelector('select').value);
+}
+function filterRows(){
+ const q=search.value.toLowerCase(),s=statusFilter.value;
+ tbody.querySelectorAll('tr').forEach(tr=>{const p=tr.querySelector('[data-f="progress"]').value;tr.style.display=(!q||tr.innerText.toLowerCase().includes(q))&&(!s||p===s)?'':'none'})
+}
+function toggleLayer(head){head.parentElement.classList.toggle('open')}
+function openModal(){modal.classList.add('open')}
+function closeModal(){modal.classList.remove('open')}
+function addFromModal(){
+ const r=blank();
+ document.querySelectorAll('[data-m]').forEach(e=>r[e.dataset.m]=e.type==='checkbox'?e.checked:e.value);
+ const d=collect();d.push(r);render(d);save(false);closeModal();
+ document.querySelectorAll('[data-m]').forEach(e=>{if(e.type==='checkbox')e.checked=false;else if(e.tagName==='SELECT')e.value='Belum';else e.value=''});
+ toast('Data ditambahkan');
+}
+function exportCSV(){
+ const h=['No.',...fields,'KESIMPULAN OTOMATIS'];const d=collect();
+ const rows=d.map((r,i)=>{const c=conclusion(r).text;return [i+1,...fields.map(f=>r[f]),c]});
+ const out=[h,...rows].map(a=>a.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\\r\\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\\ufeff'+out],{type:'text/csv;charset=utf-8'}));a.download='PLAN-ACTION-TS-JEMBER.csv';a.click();
+}
+function toast(t){const x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1600)}
+let saveTimer;
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>save(false),400)}
+function refreshRow(tr){
+ if(!tr)return;
+ const row={};
+ fields.forEach(f=>{const el=tr.querySelector(`[data-f="${f}"]`);row[f]=el?.type==='checkbox'?el.checked:(el?.value??el?.innerText.trim()??'')});
+ const p=tr.querySelector('[data-f="progress"]');
+ const pc=tr.querySelector('.progress');
+ if(p&&pc)pc.dataset.status=p.value;
+ const c=conclusion(row); const cell=tr.querySelector('.conclusion');
+ if(cell){cell.className='conclusion '+c.cls;cell.innerHTML='<b>Analisis</b>'+esc(c.text)}
+}
+document.addEventListener('input',e=>{
+ if(e.target.closest('#tbody')){refreshRow(e.target.closest('tr'));updateStats();scheduleSave()}
+ if(e.target.id==='search')filterRows();
+});
+document.addEventListener('change',e=>{
+ if(e.target.closest('#tbody')){refreshRow(e.target.closest('tr'));updateStats();scheduleSave()}
+ if(e.target.id==='statusFilter')filterRows();
+});
+render();
+</script>
+</body>
+</html>
